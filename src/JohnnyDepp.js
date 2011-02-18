@@ -13,7 +13,7 @@
    *  @param target target relative path
    *  @return relative path
    */
-  var getAbsolutePath = function(base, target) {
+  var relativeToAbsolute = function(base, target) {
     var result = base.match(/^\/.*\//)[0];
     var tree = target.split(/\//);
     var fileName = tree.pop();
@@ -30,31 +30,58 @@
   };
 
   /**
+   *  get absolute path
+   *  @param some path
+   *  @return absolute path
+   */
+  var getAbsolutePath = function(path) {
+    var tempAnchor = document.createElement("a");
+    tempAnchor.href = path;
+    return tempAnchor.href;
+  };
+
+  /**
+   *  remove protocol from url
+   *  @param url url
+   */
+  var removeProtocol = function(url) {
+    return url.match(/^[^\/]+:(.*)/)[1];
+  };
+
+  /**
+   *  remove file name from path
+   *  @param path
+   *  @return file name removed path
+   */
+  var removeFileName = function(path) {
+    return path.match(/^(.*\/)/)[1];
+  };
+
+
+  /**
    *  load script file
    *  @param path file path
    *  @param next callback
    */
   var loadScript = function(path, next) {
-    console.log("load script ", path);
+    //console.log("load script ", path);
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
-    console.log("target file name is ", fileName);
+    //console.log("target file name is ", fileName);
 
     if (/^https?/.test(path)) {
-      context = "";
+      //context = "";
     } else {
-      console.log("current context is ", context);
+      //console.log("current context is ", context);
       if (context) {
-        path = getAbsolutePath(context, path);
-        console.log("new path is ", path);
+        path = relativeToAbsolute(context, path);
+        //console.log("new path is ", path);
       } else {
-        var tempAnchor = document.createElement("a");
-        tempAnchor.href = path;
-        console.log(tempAnchor.href);
-        path = tempAnchor.href.match(/^[^\/]+:(.*)/)[1];
-        context = path.match(new RegExp("(^.*)" + fileName))[1];
+        //remove protocol
+        context = removeProtocol(getAbsolutePath(path));//.match(/^[^\/]+:(.*)/)[1];
+        //context = path.match(new RegExp("(^.*)" + fileName))[1];
       }
     }
-    console.log("path is ", path);
+    //console.log("path is ", path);
     script = document.createElement("script");
     script.type = "text/javascript";
     script.src = path;
@@ -85,11 +112,11 @@
    *  initialize
    */
   var initialize = function() {
-    console.log("running ", running);
+    //console.log("running ", running);
     var args = Array.prototype.slice.call(arguments);
     var callback = args.pop();
-    console.log(args);
-    console.log(callback);
+    //console.log(args);
+    //console.log(callback);
 
     var localProcessor = new Processor();
     var onLoadProcess = new Process();
@@ -97,6 +124,7 @@
       callback();
       this.done();
     };
+
     for (var i = 0; i < args.length; i++) {
       var path = args[i];
       var process = new Process();
@@ -108,18 +136,18 @@
         });
       };
       localProcessor.addCallback(null, function() {
-        console.log("local processor done!!!");
+        //console.log("local processor done!!!");
       });
       localProcessor.add(process);
     }
-    localProcessor.add(onLoadProcess);
 
+    localProcessor.add(onLoadProcess);
 
     if (!running) {
       rootProcessor.insertBefore(localProcessor);
       rootProcessor.addCallback(null, function() {
         running = false;
-        console.log("done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        //console.log("done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       });
       rootProcessor.execute();
     } else {
@@ -136,6 +164,16 @@
     require: function() {
       var args = Array.prototype.slice.call(arguments);
       initialize.apply(null, args);
+    },
+
+    setContext: function(path) {
+      var scripts = document.getElementsByTagName("script");
+      for (var i = 0; i < scripts.length; i++) {
+        if (scripts[i].src.match(new RegExp(path + "$"))) {
+          context = removeFileName(removeProtocol(scripts[i].src));
+        }
+      }
     }
+
   };
 })(window);
