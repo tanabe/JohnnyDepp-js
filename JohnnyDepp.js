@@ -3,6 +3,7 @@
   var context = "";
   var running = false;
   var rootProcessor = new Processor();
+  var lastProcessor = null;
 
   var getAbsolutePath = function(base, target) {
     var result = base.match(/^\/.*\//)[0];
@@ -85,17 +86,19 @@
     }
     localProcessor.add(onLoadProcess);
 
+
     if (!running) {
-      rootProcessor.add(localProcessor);
+      rootProcessor.insertBefore(localProcessor);
       rootProcessor.addCallback(null, function() {
         running = false;
         console.log("done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       });
       rootProcessor.execute();
     } else {
-      rootProcessor.add(localProcessor);
+      lastProcessor.insertBefore(localProcessor);
     }
     running = true;
+    lastProcessor = localProcessor;
   };
 
   window.JD = {
