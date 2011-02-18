@@ -133,7 +133,7 @@
    *  define JD object
    */
   window.JD = {
-    requre: function() {
+    require: function() {
       var args = Array.prototype.slice.call(arguments);
       initialize.apply(null, args);
     }

@@ -5,7 +5,7 @@ this library resolve dependencies
 
 ##example
 Application.js
-    JD.requre(
+    JD.require(
       "lib/Foo.js",
       "lib/Bar.js",
       function() {
@@ -14,7 +14,7 @@ Application.js
     );
 
 lib/Foo.js
-    JD.requre(
+    JD.require(
       "../config/Config.js",
       function() {
         //on load callback
