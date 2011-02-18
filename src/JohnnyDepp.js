@@ -68,8 +68,10 @@
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
     //console.log("target file name is ", fileName);
 
-    if (/^https?/.test(path)) {
+    //absolute
+    if (/^(\/|(https?))/.test(path)) {
       //context = "";
+    //relative
     } else {
       //console.log("current context is ", context);
       if (context) {
