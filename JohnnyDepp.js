@@ -29,7 +29,7 @@
       console.log("current context is ", context);
 
       if (context) {
-        path = getAbsolutePath(context, "../config/Config.js");
+        path = getAbsolutePath(context, path);
         console.log("new path is ", path);
       } else {
         var tempAnchor = document.createElement("a");
