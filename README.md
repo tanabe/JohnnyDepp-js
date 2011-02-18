@@ -4,7 +4,7 @@ JohnnyDepp.js: script loader library
 this library resolve dependencies
 
 ##example
-Application.js
+in Application.js
     JD.require(
       "lib/Foo.js",
       "lib/Bar.js",
@@ -13,7 +13,7 @@ Application.js
       }
     );
 
-lib/Foo.js
+in lib/Foo.js
     JD.require(
       "../config/Config.js",
       function() {
