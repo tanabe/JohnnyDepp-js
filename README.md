@@ -1,11 +1,29 @@
 JohnnyDepp.js: script loader library
 ---
-##interface
+##resolve dependencies
+this library resolve dependencies
+
+##example
+Application.js
     JD.requre(
-      "config/Config.js",
       "lib/Foo.js",
       "lib/Bar.js",
       function() {
         //on load callback
       }
     );
+
+Foo.js
+    JD.requre(
+      "../config/Config.js",
+      function() {
+        //on load callback
+      }
+    );
+
+Application.js loads
+
+ * lib/Foo.js
+ * config/Config.js
+ * lib/Bar.js
+
