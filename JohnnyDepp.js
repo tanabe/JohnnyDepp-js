@@ -1,10 +1,18 @@
 (function(window) {
+  //TODO cache implements
   var loadedScripts = [];
+
   var context = "";
   var running = false;
   var rootProcessor = new Processor();
   var lastProcessor = null;
 
+  /**
+   *  relative path to absolute path
+   *  @param base base absolute path
+   *  @param target target relative path
+   *  @return relative path
+   */
   var getAbsolutePath = function(base, target) {
     var result = base.match(/^\/.*\//)[0];
     var tree = target.split(/\//);
@@ -21,6 +29,11 @@
     return result;
   };
 
+  /**
+   *  load script file
+   *  @param path file path
+   *  @param next callback
+   */
   var loadScript = function(path, next) {
     console.log("load script ", path);
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
@@ -55,6 +68,8 @@
         clearInterval(interval);
         next();
       }, 50);
+
+      //didn't work
       //script.attachEvent("onreadystatechange", function() {
       //  next();
       //});
@@ -67,7 +82,7 @@
   };
 
   /**
-   *
+   *  initialize
    */
   var initialize = function() {
     console.log("running ", running);
@@ -114,6 +129,9 @@
     lastProcessor = localProcessor;
   };
 
+  /**
+   *  define JD object
+   */
   window.JD = {
     requre: function() {
       var args = Array.prototype.slice.call(arguments);
