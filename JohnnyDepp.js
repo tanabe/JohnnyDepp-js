@@ -1,6 +1,8 @@
 (function(window) {
   var loadedScripts = [];
   var context = "";
+  var running = false;
+  var globalProcessor = new Processor();
 
   var getAbsolutePath = function(base, target) {
     var result = base.match(/^\/.*\//)[0];
@@ -18,7 +20,7 @@
     return result;
   };
 
-  var loadScript = function(path) {
+  var loadScript = function(path, callback) {
     console.log("load script ", path);
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
     console.log("target file name is ", fileName);
@@ -41,17 +43,54 @@
     }
     console.log("path is ", path);
     script = document.createElement("script");
+    script.type = "text/javascript";
     script.src = path;
     script.onload = function() {
       console.log(this.src);
+      callback();
     };
-    var head = document.getElementsByTagName("head")[0];
-    head.insertBefore(script, head.firstChild);
+    document.getElementsByTagName("head")[0].appendChild(script);
+  };
+
+  /**
+   *
+   */
+  var initialize = function() {
+    console.log("running ", running);
+    var args = Array.prototype.slice.call(arguments);
+    var callback = args.pop();
+    console.log(args);
+
+    var localProcessor = new Processor();
+
+    for (var i = 0; i < args.length; i++) {
+      var path = args[i];
+      var process = new Process();
+      process.execute = function() {
+        var self = this;
+        loadScript(path, function() {
+          self.done();
+        });
+      };
+      localProcessor.add(process);
+    }
+
+    if (!running) {
+      globalProcessor.add(localProcessor);
+      globalProcessor.addCallback(null, function() {
+        console.log("done!!!!!");
+      });
+      globalProcessor.execute();
+    } else {
+      globalProcessor.add(localProcessor);
+    }
+    running = true;
   };
 
   window.JD = {
-    requre: function(path) {
-      loadScript(path);
+    requre: function() {
+      var args = Array.prototype.slice.call(arguments);
+      initialize.apply(null, args);
     }
   };
 })(window);
