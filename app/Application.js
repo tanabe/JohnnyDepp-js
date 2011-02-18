@@ -9,6 +9,8 @@ JD.require(
     var src = depps[getRandomInt(depps.length)];
 
     //renderDepp defined at UI.js
-    renderDepp(src);
+    $(function() {
+      renderDepp(src);
+    });
   }
 );
