@@ -30,7 +30,6 @@
       context = "";
     } else {
       console.log("current context is ", context);
-
       if (context) {
         path = getAbsolutePath(context, path);
         console.log("new path is ", path);
@@ -46,10 +45,24 @@
     script = document.createElement("script");
     script.type = "text/javascript";
     script.src = path;
-    script.onload = function() {
-      console.log(this.src);
-      next();
-    };
+
+    if (script.addEventListener) {
+      script.addEventListener("load", function() {
+        next();
+      }, false);
+    } else if (script.attachEvent) {
+      var interval = setInterval(function() {
+        clearInterval(interval);
+        next();
+      }, 50);
+      //script.attachEvent("onreadystatechange", function() {
+      //  next();
+      //});
+    } else {
+      script.onload = function() {
+        next();
+      };
+    }
     document.getElementsByTagName("head")[0].appendChild(script);
   };
 
