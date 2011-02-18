@@ -2,7 +2,7 @@
   var loadedScripts = [];
   var context = "";
   var running = false;
-  var globalProcessor = new Processor();
+  var rootProcessor = new Processor();
 
   var getAbsolutePath = function(base, target) {
     var result = base.match(/^\/.*\//)[0];
@@ -20,7 +20,7 @@
     return result;
   };
 
-  var loadScript = function(path, callback) {
+  var loadScript = function(path, next) {
     console.log("load script ", path);
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
     console.log("target file name is ", fileName);
@@ -47,7 +47,7 @@
     script.src = path;
     script.onload = function() {
       console.log(this.src);
-      callback();
+      next();
     };
     document.getElementsByTagName("head")[0].appendChild(script);
   };
@@ -60,29 +60,40 @@
     var args = Array.prototype.slice.call(arguments);
     var callback = args.pop();
     console.log(args);
+    console.log(callback);
 
     var localProcessor = new Processor();
-
+    var onLoadProcess = new Process();
+    onLoadProcess.execute = function() {
+      callback();
+      this.done();
+    };
     for (var i = 0; i < args.length; i++) {
       var path = args[i];
       var process = new Process();
+      process.path = path;
       process.execute = function() {
         var self = this;
-        loadScript(path, function() {
+        loadScript(self.path, function() {
           self.done();
         });
       };
+      localProcessor.addCallback(null, function() {
+        console.log("local processor done!!!");
+      });
       localProcessor.add(process);
     }
+    localProcessor.add(onLoadProcess);
 
     if (!running) {
-      globalProcessor.add(localProcessor);
-      globalProcessor.addCallback(null, function() {
-        console.log("done!!!!!");
+      rootProcessor.add(localProcessor);
+      rootProcessor.addCallback(null, function() {
+        running = false;
+        console.log("done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       });
-      globalProcessor.execute();
+      rootProcessor.execute();
     } else {
-      globalProcessor.add(localProcessor);
+      rootProcessor.add(localProcessor);
     }
     running = true;
   };
