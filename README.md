@@ -13,7 +13,7 @@ Application.js
       }
     );
 
-Foo.js
+lib/Foo.js
     JD.requre(
       "../config/Config.js",
       function() {
