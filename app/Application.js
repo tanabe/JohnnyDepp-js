@@ -4,6 +4,11 @@ JD.require(
   "lib/config/Config.js",
   "lib/UI.js",
   function () {
-    console.log("hogehoge");   
+    //depps defined at Config.js
+    //getRandomInt defined at MathUtil.js loaded at UI.js
+    var src = depps[getRandomInt(depps.length)];
+
+    //renderDepp defined at UI.js
+    renderDepp(src);
   }
 );

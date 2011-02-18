@@ -1,7 +1,11 @@
 //this is UI.js
 JD.require(
-  "lib/util/StringUtil.js",
+  "lib/util/MathUtil.js",
   function () {
-    console.log("UI.js init");   
+    //callback
   }
 );
+var renderDepp = function(src) {
+  $("#imagePlaceHolder").html("<img src=" + src + ">");
+};
+
