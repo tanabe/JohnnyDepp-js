@@ -68,10 +68,10 @@
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
     //console.log("target file name is ", fileName);
 
-    //absolute
+    //absolute path
     if (/^(\/|(https?))/.test(path)) {
       //context = "";
-    //relative
+    //relative path
     } else {
       //console.log("current context is ", context);
       if (context) {
@@ -83,17 +83,32 @@
         //context = path.match(new RegExp("(^.*)" + fileName))[1];
       }
     }
+
+    //check cache
+    var fileURI = getAbsolutePath(path);
+    //TODO use Array.indexOf
+    for (var i = 0; i < loadedScripts.length; i++) {
+      if (loadedScripts[i] === fileURI) {
+        next();
+        return;
+      }
+    }
+
     //console.log("path is ", path);
     script = document.createElement("script");
     script.type = "text/javascript";
     script.src = path;
-
+    //except IE
     if (script.addEventListener) {
       script.addEventListener("load", function() {
+        loadedScripts.push(this.src);
+        //console.log("loaded: ", this.src);
         next();
       }, false);
+    //IE does not work onload event
     } else if (script.attachEvent) {
       var interval = setInterval(function() {
+        loadedScripts.push(this.src);
         clearInterval(interval);
         next();
       }, 50);
@@ -163,11 +178,17 @@
    *  define JD object
    */
   window.JD = {
+    /**
+     *
+     */
     require: function() {
       var args = Array.prototype.slice.call(arguments);
       initialize.apply(null, args);
     },
 
+    /**
+     *
+     */
     setContext: function(path) {
       var scripts = document.getElementsByTagName("script");
       for (var i = 0; i < scripts.length; i++) {
