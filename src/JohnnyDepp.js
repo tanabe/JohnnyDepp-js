@@ -1,7 +1,5 @@
 (function(window) {
-  //TODO cache implements
   var loadedScripts = [];
-
   var context = "";
   var running = false;
   var rootProcessor = new Processor();
@@ -142,6 +140,7 @@
       this.done();
     };
 
+    var processes = [];
     for (var i = 0; i < args.length; i++) {
       var path = args[i];
       var process = new Process();
@@ -152,12 +151,15 @@
           self.done();
         });
       };
-      localProcessor.addCallback(null, function() {
-        //console.log("local processor done!!!");
-      });
-      localProcessor.add(process);
+      //localProcessor.add(process);
+      //parallel, concurrency test
+      processes.push(process);
     }
-
+    localProcessor.addCallback(null, function() {
+      //console.log("local processor done!!!");
+    });
+    //parallel, concurrency test
+    localProcessor.add.apply(localProcessor, processes);
     localProcessor.add(onLoadProcess);
 
     if (!running) {
