@@ -96,6 +96,7 @@
     script = document.createElement("script");
     script.type = "text/javascript";
     script.src = path;
+
     //except IE
     if (script.addEventListener) {
       script.addEventListener("load", function() {
@@ -105,11 +106,14 @@
       }, false);
     //IE does not work onload event
     } else if (script.attachEvent) {
-      var interval = setInterval(function() {
-        loadedScripts.push(this.src);
-        clearInterval(interval);
-        next();
-      }, 50);
+      var timerCallback = (function(src) {
+        return function() {
+          loadedScripts.push(src);
+          clearInterval(interval);
+          next();
+        }
+      })(script.src);
+      var interval = setInterval(timerCallback, 50);
 
       //didn't work
       //script.attachEvent("onreadystatechange", function() {
