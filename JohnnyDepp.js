@@ -35,6 +35,11 @@
   var getAbsolutePath = function(path) {
     var tempAnchor = document.createElement("a");
     tempAnchor.href = path;
+    //FIXME for IE6..7
+    if (!tempAnchor.href.match(/^http/)) {
+      var url = location.href.toString().match(/(^.*\/)/)[1];
+      return url + path;
+    }
     return tempAnchor.href;
   };
 
@@ -192,7 +197,9 @@
       var scripts = document.getElementsByTagName("script");
       for (var i = 0; i < scripts.length; i++) {
         if (scripts[i].src.match(new RegExp(path + "$"))) {
-          context = removeFileName(removeProtocol(scripts[i].src));
+          //FIXME IE6..7 is script.src returns relative path ex) foo/bar.js
+          //then using getAbsolutePath
+          context = removeFileName(removeProtocol(getAbsolutePath(scripts[i].src)));
         }
       }
     }
