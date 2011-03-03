@@ -104,21 +104,14 @@
         //console.log("loaded: ", this.src);
         next();
       }, false);
-    //IE does not work onload event
+    //IE does not work onload event, instead of use onreadystatechange
     } else if (script.attachEvent) {
-      var timerCallback = (function(src) {
-        return function() {
-          loadedScripts.push(src);
-          clearInterval(interval);
+      script.onreadystatechange  =  function() {
+        if (this.readyState === "loaded" || this.readyState === "complete") {
+          this.onreadystatechange = null;
           next();
         }
-      })(script.src);
-      var interval = setInterval(timerCallback, 50);
-
-      //didn't work
-      //script.attachEvent("onreadystatechange", function() {
-      //  next();
-      //});
+      };
     } else {
       script.onload = function() {
         next();
