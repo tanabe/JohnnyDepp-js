@@ -96,6 +96,7 @@
     script = document.createElement("script");
     script.type = "text/javascript";
     script.src = path;
+
     //except IE
     if (script.addEventListener) {
       script.addEventListener("load", function() {
@@ -103,18 +104,14 @@
         //console.log("loaded: ", this.src);
         next();
       }, false);
-    //IE does not work onload event
+    //IE does not work onload event, instead of use onreadystatechange
     } else if (script.attachEvent) {
-      var interval = setInterval(function() {
-        loadedScripts.push(this.src);
-        clearInterval(interval);
-        next();
-      }, 50);
-
-      //didn't work
-      //script.attachEvent("onreadystatechange", function() {
-      //  next();
-      //});
+      script.onreadystatechange  =  function() {
+        if (this.readyState === "loaded" || this.readyState === "complete") {
+          this.onreadystatechange = null;
+          next();
+        }
+      };
     } else {
       script.onload = function() {
         next();
