@@ -441,7 +441,15 @@
      */
     require: function() {
       var args = Array.prototype.slice.call(arguments);
-      initialize.apply(null, args);
+      if (context) {
+        initialize.apply(null, args);
+      }
+
+      //if not set context, set context
+      return function(path) {
+        JD.setContext(path);
+        initialize.apply(null, args);
+      };
     },
 
     /**
