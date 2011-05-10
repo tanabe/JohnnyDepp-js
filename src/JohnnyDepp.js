@@ -6,7 +6,10 @@
 (function(window) {
 
   /**
-   * Process constructor
+   * Process class constructor
+   * @name Process
+   * @class
+   * @return 
    */
   var Process = function() {
 
@@ -14,26 +17,34 @@
     var callbacks = [];
 
     /**
-     *  execute abstract function
+     * execute process abstract function
+     * @name execute
+     * @function
      */
     function execute() {
       done();
     }
 
     /**
-     *  pause abstract function
+     * pause process abstract function 
+     * @name pause
+     * @function
      */
     function pause() {
     }
 
     /**
-     *  resume abstract function
+     * reusme process abstract function
+     * @name resume
+     * @function
      */
     function resume() {
     }
 
     /**
-     *  done
+     * done
+     * @name done
+     * @function
      */
     function done() {
       //fire callbacks
@@ -43,25 +54,31 @@
     }
 
     /**
-     *  set result object
-     *  @result result object
+     * set result object
+     * @name setResult
+     * @function
+     * @param result result object
      */
     function setResult(result) {
       this.result = result;
     }
 
     /**
-     *  set callback function
-     *  @param scope owner of callback function
-     *  @param callback this function will fire after previous process
+     * set callback function
+     * @name addCallback
+     * @function
+     * @param scope owner of callback function
+     * @param callback this function will fire after previous process
      */
     function addCallback(scope, callback) {
       callbacks.push({scope: scope, callback: callback});
     }
 
     /**
-     *  unset callback function
-     *  @param callback callback function
+     * unset callback function
+     * @name removeCallback
+     * @function
+     * @param callback callback function
      */
     function removeCallback(callback) {
       for (var i = 0, length = callback.length; i < length; i++) {
@@ -72,6 +89,7 @@
       }
     }
 
+    //create inner object
     var Process = {};
     Process.result = result;
     Process.execute = execute;
@@ -85,7 +103,9 @@
   };
 
   /**
-   *  Processor constructor extends Process
+   * Processor class extends Process
+   * @name Processor
+   * @class
    */
   var Processor = function() {
 
@@ -98,7 +118,9 @@
     var runningProcessor = null;
 
     /**
-     *  execute
+     * 
+     * @name execute
+     * @function
      */
     function execute() {
       if (executed) {
@@ -110,7 +132,10 @@
     }
 
     /**
-     *  execte processes
+     * execute processes
+     * @name executeProcesses
+     * @function
+     * @return 
      */
     function executeProcesses() {
       if (processQueue.length > 0) {
@@ -131,7 +156,10 @@
     }
 
     /**
-     *  progress complete callback function
+     * process complete handler
+     * @name processCompleteHandler
+     * @function
+     * @param process process
      */
     function processCompleteHandler(process) {
       process.removeCallback(arguments.callee);
@@ -143,8 +171,11 @@
     }
 
     /**
-     *  add process end of the queue
-     *  @params any processes
+     * add process to end of the queue 
+     * @name add
+     * @function
+     * @param any processes (arguments)
+     * @return self
      */
     function add() {
       processQueue.push([].slice.call(arguments));
@@ -152,8 +183,11 @@
     }
 
     /**
-     *  add process start of the queue
-     *  @params any processes
+     * add process to start of the queue
+     * @name insertBefore
+     * @function
+     * @param any processes (arguments)
+     * @return self
      */
     function insertBefore() {
       processQueue.unshift([].slice.call(arguments));
@@ -161,7 +195,9 @@
     }
 
     /**
-     *  pause processes
+     * pause processes
+     * @name pauseProcesses
+     * @function
      */
     function pauseProcesses() {
       for (var i = 0, length = currentProcesses.length; i < length; i++) {
@@ -170,7 +206,9 @@
     }
 
     /**
-     *  resume processes
+     * resume processes
+     * @name resumeProcesses
+     * @function
      */
     function resumeProcesses() {
       for (var i = 0, length = currentProcesses.length; i < length; i++) {
@@ -179,12 +217,16 @@
     }
 
     /**
-     *  return running child processor
+     * get running child processor
+     * @name getRunningProcessor
+     * @function
+     * @return running child processor
      */
     function getRunningProcessor() {
       return runningProcessor;
     }
 
+    //create inner object
     var Processor = new Process();
     Processor.execute = execute;
     Processor.executeProcesses = executeProcesses;
@@ -196,6 +238,8 @@
     Processor.isProcessor = true;
     return Processor;
   }
+
+  //assign to global
   window.Process = Process;
   window.Processor = Processor;
 })(window);
@@ -213,10 +257,12 @@
   var lastProcessor = null;
 
   /**
-   *  relative path to absolute path
-   *  @param base base absolute path
-   *  @param target target relative path
-   *  @return relative path
+   * exchange relative path to absolute path
+   * @name relativeToAbsolute
+   * @function
+   * @param base base absolute path
+   * @param target target relative path
+   * @return relative path
    */
   var relativeToAbsolute = function(base, target) {
     var result = base.match(/^\/.*\//)[0];
@@ -235,9 +281,11 @@
   };
 
   /**
-   *  get absolute path
-   *  @param some path
-   *  @return absolute path
+   * get absolute path
+   * @name getAbsolutePath
+   * @function
+   * @param path 
+   * @return absolute path
    */
   var getAbsolutePath = function(path) {
     var tempAnchor = document.createElement("a");
@@ -251,27 +299,33 @@
   };
 
   /**
-   *  remove protocol from url
-   *  @param url url
+   * remove protocol from url
+   * @name removeProtocol
+   * @function
+   * @param url url
+   * @return url
    */
   var removeProtocol = function(url) {
     return url.match(/^[^\/]+:(.*)/)[1];
   };
 
   /**
-   *  remove file name from path
-   *  @param path
-   *  @return file name removed path
+   * remove file name from path
+   * @name removeFileName
+   * @function
+   * @param path 
+   * @return file name remove path
    */
   var removeFileName = function(path) {
     return path.match(/^(.*\/)/)[1];
   };
 
-
   /**
-   *  load script file
-   *  @param path file path
-   *  @param next callback
+   * load script file
+   * @name loadScript
+   * @function
+   * @param path file path
+   * @param next callback
    */
   var loadScript = function(path, next) {
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
@@ -327,7 +381,9 @@
   };
 
   /**
-   *  initialize
+   * initialize
+   * @name initialize
+   * @function
    */
   var initialize = function() {
     var args = Array.prototype.slice.call(arguments);
@@ -376,12 +432,12 @@
     lastProcessor = localProcessor;
   };
 
-  /**
-   *  define JD object
-   */
+  //apply to global
   window.JD = {
     /**
-     *
+     * require interface
+     * @name require
+     * @function
      */
     require: function() {
       var args = Array.prototype.slice.call(arguments);
@@ -389,7 +445,10 @@
     },
 
     /**
-     *
+     * set context
+     * @name setContext
+     * @function
+     * @param path root path
      */
     setContext: function(path) {
       var scripts = document.getElementsByTagName("script");
