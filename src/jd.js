@@ -1,11 +1,12 @@
 /**
- *  command pattern like library
- *  (c) Hideaki Tanabe <http://blog.kaihatsubu.com>
- *  Licensed under the MIT License.
+ * command pattern like library
+ * (c) Hideaki Tanabe <http://blog.kaihatsubu.com>
+ * Licensed under the MIT License.
  */
 (function(window) {
+
   /**
-   *  Process constructor
+   * Process constructor
    */
   var Process = function() {
 
@@ -273,19 +274,15 @@
    *  @param next callback
    */
   var loadScript = function(path, next) {
-    //console.log("load script ", path);
     var fileName = path.match(/\/?([^\/]+\.js$)/)[1];
-    //console.log("target file name is ", fileName);
 
     //absolute path
     if (/^(\/|(https?))/.test(path)) {
       //context = "";
     //relative path
     } else {
-      //console.log("current context is ", context);
       if (context) {
         path = relativeToAbsolute(context, path);
-        //console.log("new path is ", path);
       } else {
         //remove protocol
         context = removeProtocol(getAbsolutePath(path));//.match(/^[^\/]+:(.*)/)[1];
@@ -303,7 +300,6 @@
       }
     }
 
-    //console.log("path is ", path);
     script = document.createElement("script");
     script.type = "text/javascript";
     script.src = path;
@@ -312,7 +308,6 @@
     if (script.addEventListener) {
       script.addEventListener("load", function() {
         loadedScripts.push(this.src);
-        //console.log("loaded: ", this.src);
         next();
       }, false);
     //IE does not work onload event, instead of use onreadystatechange
@@ -335,11 +330,8 @@
    *  initialize
    */
   var initialize = function() {
-    //console.log("running ", running);
     var args = Array.prototype.slice.call(arguments);
     var callback = args.pop();
-    //console.log(args);
-    //console.log(callback);
 
     var localProcessor = new Processor();
     var onLoadProcess = new Process();
@@ -359,13 +351,14 @@
           self.done();
         });
       };
-      //localProcessor.add(process);
+
       //parallel, concurrency test
       processes.push(process);
     }
+
     localProcessor.addCallback(null, function() {
-      //console.log("local processor done!!!");
     });
+
     //parallel, concurrency test
     localProcessor.add.apply(localProcessor, processes);
     localProcessor.add(onLoadProcess);
@@ -374,7 +367,6 @@
       rootProcessor.insertBefore(localProcessor);
       rootProcessor.addCallback(null, function() {
         running = false;
-        //console.log("done!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       });
       rootProcessor.execute();
     } else {
