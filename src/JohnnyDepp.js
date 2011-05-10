@@ -9,7 +9,7 @@
    * Process class constructor
    * @name Process
    * @class
-   * @return 
+   * @return Process class
    */
   var Process = function() {
 
